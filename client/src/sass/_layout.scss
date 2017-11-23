@@ -1,0 +1,109 @@
+body {
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  height: 100%;
+}
+
+main {
+  max-width: 960px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+main.index {
+  padding-top: 30px;
+}
+
+.intro {
+  width: 100%;
+  background: rgba($seventh, 0.9);
+  color: $white;
+  box-sizing: border-box;
+  padding: 3%;
+  padding-top: 5%;
+  .row {
+    margin-left: 20%;
+  }
+}
+
+.banner {
+  width: 100%;
+  height: 300px;
+  background: rgba($primary, 0.9);
+  color: white;
+  padding-top: 1%;
+  box-sizing: border-box;
+}
+
+.banner h1 {
+  padding-left: 1%;
+}
+
+.subbanner {
+  width: 100%;
+  height: 1em;
+  margin-bottom: 1%;
+  background: $primary;
+  box-shadow: 0 1px 0 0 lightgray;
+}
+
+header {
+  width: 100%;
+  background: $fourth;
+  color: white;
+  padding-top: 1%;
+  box-sizing: border-box;
+  a, a:visited, a:link {
+    color: white;
+  }
+  .head {
+    height: 3em;
+  }
+}
+
+nav {
+  display: flex;
+  .col {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 0.5em;
+  }
+}
+
+.head {
+  display: flex;
+  h3 {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.container {
+  width: 80vw;
+  margin: 0 auto;
+}
+
+.right {
+  float: right
+}
+
+.left {
+  float: left;
+}
+
+.col {
+  margin-left: 1%;
+  display: inline-block;
+}
+
+.search {
+  margin-top: 1em;
+}
+
+.head h3 {
+  font-family: Lobster Two;
+  font-size: 150%;
+  width: 100%;
+  padding-left: 1%;
+  margin: 0;
+}

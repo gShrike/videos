@@ -1,0 +1,15 @@
+.profile {
+  display: flex;
+  img {
+    max-width: 100px;
+    height: 100px;
+  }
+}
+
+ul {
+	list-style: inside circle;
+}
+
+ol {
+	list-style: inside decimal;
+}

@@ -1,0 +1,24 @@
+table {
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 3%;
+  thead tr{
+    background: $primary;
+    font-size: 110%;
+    height: 30px;
+    color: $white;
+  }
+  tbody tr {
+    height: 20px;
+    text-align: center;
+  }
+  td:nth-child(2) {
+    width: 400px;
+  }
+  td {
+    padding-top: .4%;
+  }
+  tr:nth-child(2n+2) {
+    background: $fifth;
+  }
+}

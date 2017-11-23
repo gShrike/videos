@@ -1,0 +1,114 @@
+.login {
+  max-width: 400px;
+  margin: 0 auto;
+  border: 3px solid rgba($black, 0.3);
+  border-radius: 25px;
+  padding: 2%;
+  input {
+    width: 95%;
+    display: block;
+    margin-bottom: 2%;
+  }
+  label {
+    width: 40%;
+  }
+  label input, p {
+    display: inline-block;
+  }
+  input[type='submit'] {
+    width: 23%;
+    display: inline-block;
+    margin-bottom: 30px;
+    margin-top: 15px;
+  }
+  a.button {
+    margin-left: 29%;
+    display: inline-block;
+  }
+  h4 {
+    width: 20%;
+    margin: 0 auto;
+  }
+  .github {
+    border-top: 1px dashed $black;
+    padding-top: 5px;
+    width: 80%;
+    margin: 0 auto;
+  }
+  .email {
+    width: 90%;
+    margin: 0 auto;
+  }
+  .text {
+    display: inline-block;
+  }
+  img {
+    margin-right: 30px;
+  }
+}
+
+.signup, .editProfile {
+  max-width: 500px;
+  margin: 0 auto;
+  border: 3px solid rgba($black, 0.3);
+  border-radius: 25px;
+  padding: 2%;
+  padding-left: 5%;
+  .col1, .col2 {
+    width: 50%;
+    display: inline-block;
+    margin: 0 auto;
+  }
+  input {
+    width: 90%;
+    display: inline-block;
+    margin-bottom: 2%;
+  }
+  .show {
+    width: 20%;
+  }
+  input[type='submit'].delete {
+    width: 20%;
+    margin-left: 65%;
+  }
+}
+
+.editProfile {
+  padding-right: 0;
+}
+
+.categories {
+  padding: 1%;
+  border: 3px solid rgba($black, 0.3);
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+
+.category {
+  padding: 1%;
+  border: 3px solid rgba($black, 0.3);
+  border-radius: 25px;
+  display: inline-block;
+  margin: .3%;
+}
+
+.category:hover {
+  background: $fifth;
+  cursor: pointer;
+}
+
+.selected {
+  background: $fifth;
+}
+
+.match {
+  color: gray;
+  display: inline-block;
+  margin-left: 8%;
+}
+
+.errors {
+  color: $red;
+  margin-left: 1%;
+  margin: 10px;
+}
