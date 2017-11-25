@@ -16,10 +16,13 @@ Run seeds with `npm run seed`.
 
 ## Deployment to Heroku
 
+[Link](https://shrike-videos.herokuapp.com/)
+
 ```
-heroku create
-git push heroku master
-heroku addons:create heroku-postgresql
+git subtree push --prefix server heroku master
+# or to force changes
+git push heroku `git subtree split --prefix server master`:master --force
 heroku run npm run migrate
+heroku run npm run seed
 heroku open
 ```
