@@ -23,7 +23,7 @@ class LinkRouter {
     }
     getOne(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let id = parseInt(req.params.id);
+            const id = parseInt(req.params.id);
             const link = yield link_queries_1.default.getOne(id);
             if (link) {
                 res.json({ message: 'Success', link });
@@ -44,16 +44,29 @@ class LinkRouter {
             }
         });
     }
+    addTag(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const tag = req.body.tag;
+            try {
+                yield link_queries_1.default.addTag(id, tag);
+                res.json({ message: 'Success' });
+            }
+            catch (error) {
+                res.json({ message: 'Unable to add tag.', error });
+            }
+        });
+    }
     edit(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let id = parseInt(req.params.id);
+            const id = parseInt(req.params.id);
             const link = yield link_queries_1.default.edit(id, req.body);
             res.json({ message: 'Success', link });
         });
     }
     remove(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let id = parseInt(req.params.id);
+            const id = parseInt(req.params.id);
             try {
                 yield link_queries_1.default.remove(id);
                 res.json({ message: 'Success' });
@@ -63,12 +76,27 @@ class LinkRouter {
             }
         });
     }
+    removeTag(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const tag_id = req.params.tag_id;
+            try {
+                yield link_queries_1.default.removeTag(id, tag_id);
+                res.json({ message: 'Success' });
+            }
+            catch (error) {
+                res.json({ message: 'Unable to remove tag.', error });
+            }
+        });
+    }
     init() {
         this.router.get('/', this.getAll);
         this.router.get('/:id', this.getOne);
         this.router.post('/', this.add);
+        this.router.post('/:id/tags', this.addTag);
         this.router.put('/:id', this.edit);
         this.router.delete('/:id', this.remove);
+        this.router.delete('/:id/tags/:tag_id', this.removeTag);
     }
 }
 exports.LinkRouter = LinkRouter;

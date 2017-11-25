@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "dev": "nodemon dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'",
     "migrate": "knex migrate:latest --cwd ./dist",
     "seed": "knex seed:run --cwd ./dist"

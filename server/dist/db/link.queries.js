@@ -9,16 +9,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
-const getAll = () => {
-    return connection_1.default('link').select();
-};
+const tag_queries_1 = require("./tag.queries");
 const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
-    const link = yield connection_1.default('link').select().where('id', id);
-    return link[0];
+    const link = yield connection_1.default('link').select().where('id', id).first();
+    const linkTags = yield connection_1.default('link_tags').select().where('link_id', id);
+    const tagRequests = linkTags.map((linkTag) => {
+        return connection_1.default('tag').select().where('id', linkTag.tag_id).first();
+    });
+    link.tags = yield Promise.all(tagRequests);
+    return link;
+});
+const getAll = () => __awaiter(this, void 0, void 0, function* () {
+    const links = yield connection_1.default('link').select();
+    const linkRequests = links.map((link) => {
+        return getOne(link.id);
+    });
+    return yield Promise.all(linkRequests);
 });
 const add = (link) => __awaiter(this, void 0, void 0, function* () {
     const result = yield connection_1.default('link').insert(link).returning('*');
     return result[0];
+});
+const addTag = (link_id, tag_name) => __awaiter(this, void 0, void 0, function* () {
+    let tag = yield tag_queries_1.default.getOneByName(tag_name);
+    if (!tag) {
+        tag = yield tag_queries_1.default.add({ name: tag_name });
+    }
+    return connection_1.default('link_tags').insert({ link_id, tag_id: tag.id });
 });
 const edit = (id, link) => __awaiter(this, void 0, void 0, function* () {
     const result = yield connection_1.default('link').update(link).where('id', id).returning('*');
@@ -27,10 +44,15 @@ const edit = (id, link) => __awaiter(this, void 0, void 0, function* () {
 const remove = (id) => {
     return connection_1.default('link').del().where('id', id);
 };
+const removeTag = (link_id, tag_id) => {
+    return connection_1.default('link_tags').del().where({ link_id, tag_id });
+};
 exports.default = {
     getAll,
     getOne,
     add,
+    addTag,
     edit,
-    remove
+    remove,
+    removeTag
 };

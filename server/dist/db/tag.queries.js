@@ -10,26 +10,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
 const getAll = () => {
-    return connection_1.default('monster').select();
+    return connection_1.default('tag').select();
 };
 const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
-    const monster = yield connection_1.default('monster').select().where('id', id);
-    return monster[0];
+    const tag = yield connection_1.default('tag').select().where('id', id);
+    return tag[0];
 });
-const add = (monster) => __awaiter(this, void 0, void 0, function* () {
-    const result = yield connection_1.default('monster').insert(monster).returning('*');
+const getOneByName = (name) => __awaiter(this, void 0, void 0, function* () {
+    const tag = yield connection_1.default('tag').select().where('name', name);
+    return tag[0];
+});
+const add = (tag) => __awaiter(this, void 0, void 0, function* () {
+    const result = yield connection_1.default('tag').insert(tag).returning('*');
     return result[0];
 });
-const edit = (id, monster) => __awaiter(this, void 0, void 0, function* () {
-    const result = yield connection_1.default('monster').update(monster).where('id', id).returning('*');
+const edit = (id, tag) => __awaiter(this, void 0, void 0, function* () {
+    const result = yield connection_1.default('tag').update(tag).where('id', id).returning('*');
     return result[0];
 });
 const remove = (id) => {
-    return connection_1.default('monster').del().where('id', id);
+    return connection_1.default('tag').del().where('id', id);
 };
 exports.default = {
     getAll,
     getOne,
+    getOneByName,
     add,
     edit,
     remove

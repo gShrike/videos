@@ -6,7 +6,7 @@ Run with `npm start`.
 
 ### Development
 
-Start `gulp`. 
+Start `gulp` and run `npm run dev`. 
 
 Create database `shrike-videos` on postgres.
 

@@ -16,7 +16,7 @@ export class LinkRouter {
   }
 
   public async getOne(req: Request, res: Response, next: NextFunction) {
-    let id: number = parseInt(req.params.id)
+    const id: number = parseInt(req.params.id)
     const link: Link = await linkQueries.getOne(id) 
     if (link) {
       res.json({ message: 'Success', link })
@@ -34,14 +34,25 @@ export class LinkRouter {
     }
   }
 
+  public async addTag(req: Request, res: Response, next: NextFunction) {
+    const id: number = req.params.id
+    const tag: string = req.body.tag
+    try {
+      await linkQueries.addTag(id, tag) 
+      res.json({ message: 'Success'})
+    } catch(error) {
+      res.json({ message: 'Unable to add tag.', error })
+    }
+  }
+
   public async edit(req: Request, res: Response, next: NextFunction) {
-    let id: number = parseInt(req.params.id)
+    const id: number = parseInt(req.params.id)
     const link: Link = await linkQueries.edit(id, req.body)
     res.json({ message: 'Success', link })
   }
 
   public async remove(req: Request, res: Response, next: NextFunction) {
-    let id: number = parseInt(req.params.id)
+    const id: number = parseInt(req.params.id)
     try {
       await linkQueries.remove(id) 
       res.json({ message: 'Success'})
@@ -50,12 +61,25 @@ export class LinkRouter {
     }
   }
 
+  public async removeTag(req: Request, res: Response, next: NextFunction) {
+    const id: number = req.params.id
+    const tag_id: number = req.params.tag_id
+    try {
+      await linkQueries.removeTag(id, tag_id) 
+      res.json({ message: 'Success'})
+    } catch(error) {
+      res.json({ message: 'Unable to remove tag.', error })
+    }
+  }
+  
   init() {
     this.router.get('/', this.getAll)
     this.router.get('/:id', this.getOne)
     this.router.post('/', this.add)
+    this.router.post('/:id/tags', this.addTag)
     this.router.put('/:id', this.edit)
     this.router.delete('/:id', this.remove)
+    this.router.delete('/:id/tags/:tag_id', this.removeTag)
   }
 
 }

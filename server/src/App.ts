@@ -4,6 +4,7 @@ import * as logger from 'morgan'
 import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
 import LinkRouter from './routes/LinkRouter'
+import TagRouter from './routes/TagRouter'
 
 class App {
 
@@ -31,6 +32,7 @@ class App {
     })
     this.app.use('/', router)
     this.app.use('/api/v1/links', LinkRouter)
+    this.app.use('/api/v1/tags', TagRouter)
   }
 
 }
