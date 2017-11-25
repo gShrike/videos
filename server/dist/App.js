@@ -22,7 +22,11 @@ class App {
         let router = express.Router();
         router.get('/', (req, res, next) => {
             res.json({
-                message: 'RESTful API /api/v1/links'
+                message: 'Shrike Videos API',
+                endpoints: [
+                    '/api/v1/links',
+                    '/api/v1/tags'
+                ]
             });
         });
         this.app.use('/', router);

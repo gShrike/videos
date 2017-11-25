@@ -4,6 +4,7 @@ const up = function (knex) {
     return knex.schema.createTable('link', (table) => {
         table.increments();
         table.text('url').notNullable();
+        table.text('title').notNullable();
     });
 };
 exports.up = up;
