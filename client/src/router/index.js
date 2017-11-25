@@ -3,7 +3,6 @@ import Router from 'vue-router';
 import Home from '@/components/Home';
 import Login from '@/components/Login';
 import Signup from '@/components/Signup';
-import Teams from '@/components/Teams';
 import Links from '@/components/Links';
 
 Vue.use(Router);
@@ -25,11 +24,6 @@ export default new Router({
       path: '/signup',
       name: 'Signup',
       component: Signup,
-    },
-    {
-      path: '/teams',
-      name: 'Teams',
-      component: Teams,
     },
     {
       path: '/links',

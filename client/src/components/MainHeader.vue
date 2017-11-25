@@ -5,8 +5,7 @@
       <nav>
         <div class="col"><router-link to="links">links</router-link></div>
         <div class="col"><router-link to="login">login</router-link></div>
-        <!-- <div class="col"><router-link to="teams">teams</router-link></div> 
-        <div class="col"><router-link to="signup">signup</router-link></div> -->
+        <!-- <div class="col"><router-link to="signup">signup</router-link></div> -->
       </nav>
     </div>
     <div class="subbanner"></div>
