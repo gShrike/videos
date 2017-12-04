@@ -1,9 +1,9 @@
 <template>
-  <main>
+  <div>
     <h3> A Platform for Links </h3>
     <h6> Tag, rate, and share links to videos, blogs, documents, and more </h6>
     <links />
-  </main>
+  </div>
 </template>
 
 <script>

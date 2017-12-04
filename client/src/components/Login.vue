@@ -3,9 +3,12 @@
     <div class="container">
       <h2>Login</h2>
       <div class="login">
-        <div class="errors">
-        </div>
-        <form id="submit" action="/login" method="post">
+        <form id="submit" :action="loginURL" method="post">
+          <input v-on:click="gitLogin" type="button" class="github show" value="Github"/>
+          <h1> ------- or ------- </h1>
+          <div v-if="error" class="errors">
+            <p> Invalid Name or Password </p>
+          </div>
           <label for="name">Name: </label>
           <input type="text" name="name" id="name"/>
           <label for="password">Password: </label>
@@ -18,8 +21,28 @@
 </template>
 
 <script>
+import qs from 'qs';
+import config from '../config';
+
 export default {
   name: 'Login',
+  data() {
+    return {
+      loginURL: `${config.SERVER_URL}/login`,
+      error: false,
+    };
+  },
+  mounted() {
+    const query = qs.parse(location.search.substr(1));
+    if (query.error) {
+      this.error = true;
+    }
+  },
+  methods: {
+    gitLogin() {
+      window.location.href = `${config.SERVER_URL}/login/github`;
+    },
+  },
 };
 </script>
 

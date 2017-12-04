@@ -4,6 +4,7 @@ import Home from '@/components/Home';
 import Login from '@/components/Login';
 import Signup from '@/components/Signup';
 import Links from '@/components/Links';
+import Token from '@/components/Token';
 
 Vue.use(Router);
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/links',
       name: 'Links',
       component: Links,
+    },
+    {
+      path: '/token',
+      name: 'Token',
+      component: Token,
     },
     {
       path: '*',

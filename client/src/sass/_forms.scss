@@ -9,6 +9,10 @@
     display: block;
     margin-bottom: 2%;
   }
+  h1 {
+    margin-top: 0.5em;
+    text-align: center;
+  }
   label {
     width: 40%;
   }
@@ -30,7 +34,6 @@
     margin: 0 auto;
   }
   .github {
-    border-top: 1px dashed $black;
     padding-top: 5px;
     width: 80%;
     margin: 0 auto;
