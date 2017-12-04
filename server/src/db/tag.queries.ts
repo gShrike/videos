@@ -11,7 +11,7 @@ const getOne = async (id: number) => {
 }
 
 const getOneByName = async (name: string) => {
-  const tag: any[] = await knex('tag').select().where('name', name)
+  const tag: any[] = await knex('tag').select().where(knex.raw('LOWER("name") = ?', name.toLowerCase()))
   return tag[0]
 }
 

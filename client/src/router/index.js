@@ -5,6 +5,7 @@ import Login from '@/components/Login';
 import Signup from '@/components/Signup';
 import Links from '@/components/Links';
 import Token from '@/components/Token';
+import New from '@/components/New';
 
 Vue.use(Router);
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/token',
       name: 'Token',
       component: Token,
+    },
+    {
+      path: '/new',
+      name: 'New',
+      component: New,
     },
     {
       path: '*',

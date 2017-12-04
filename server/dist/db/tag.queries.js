@@ -17,7 +17,7 @@ const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
     return tag[0];
 });
 const getOneByName = (name) => __awaiter(this, void 0, void 0, function* () {
-    const tag = yield connection_1.default('tag').select().where('name', name);
+    const tag = yield connection_1.default('tag').select().where(connection_1.default.raw('LOWER("name") = ?', name.toLowerCase()));
     return tag[0];
 });
 const add = (tag) => __awaiter(this, void 0, void 0, function* () {
