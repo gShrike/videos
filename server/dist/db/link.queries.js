@@ -10,8 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
 const tag_queries_1 = require("./tag.queries");
+const uniqBy = (list, key) => {
+    const seen = {};
+    return list.filter(function (item) {
+        return seen.hasOwnProperty(item[key]) ? false : (seen[item[key]] = true);
+    });
+};
 const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
-    const link = yield connection_1.default('link').select().where('id', id).orderBy('title', 'asc').first();
+    const link = yield connection_1.default('link').select().where('id', id).first();
     const linkTags = yield connection_1.default('link_tags').select().where('link_id', id);
     const tagRequests = linkTags.map((linkTag) => {
         return connection_1.default('tag').select().where('id', linkTag.tag_id).first();
@@ -19,12 +25,27 @@ const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
     link.tags = yield Promise.all(tagRequests);
     return link;
 });
-const getAll = () => __awaiter(this, void 0, void 0, function* () {
-    const links = yield connection_1.default('link').select();
-    const linkRequests = links.map((link) => {
-        return getOne(link.id);
-    });
-    return yield Promise.all(linkRequests);
+const getAll = (q) => __awaiter(this, void 0, void 0, function* () {
+    let query = connection_1.default('link')
+        .select('link.id', 'link.title', 'link.url', 'link.created_at')
+        .orderBy('title', 'asc');
+    if (q) {
+        query = query.innerJoin('link_tags', 'link.id', 'link_tags.link_id')
+            .innerJoin('tag', 'tag.id', 'link_tags.tag_id')
+            .where(connection_1.default.raw('LOWER("title") LIKE ?', `%${q}%`))
+            .orWhere(connection_1.default.raw('LOWER("name") LIKE ?', `%${q}%`));
+    }
+    const links = yield query;
+    if (links.length > 0) {
+        const linkRequests = links.map((link) => {
+            return getOne(link.id);
+        });
+        const data = yield Promise.all(linkRequests);
+        return uniqBy(data, 'id');
+    }
+    else {
+        return links;
+    }
 });
 const add = (link) => __awaiter(this, void 0, void 0, function* () {
     const result = yield connection_1.default('link').insert(link).returning('*');

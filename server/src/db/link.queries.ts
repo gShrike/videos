@@ -3,8 +3,15 @@ import Link from './Link.model'
 import Tag from './Tag.model'
 import tagQueries from './tag.queries'
 
+const uniqBy = (list, key) => {
+  const seen = {};
+  return list.filter(function(item) {
+    return seen.hasOwnProperty(item[key]) ? false : (seen[item[key]] = true);
+  })
+}
+
 const getOne = async (id: number) => {
-  const link: any = await knex('link').select().where('id', id).orderBy('title', 'asc').first()
+  const link: any = await knex('link').select().where('id', id).first()
   const linkTags: any = await knex('link_tags').select().where('link_id', id)
   const tagRequests: Promise<Tag>[] = linkTags.map((linkTag: any) => {
     return knex('tag').select().where('id', linkTag.tag_id).first()
@@ -13,12 +20,26 @@ const getOne = async (id: number) => {
   return link
 }
 
-const getAll = async () => {
-  const links: Link[] = await  knex('link').select()
-  const linkRequests: Promise<any>[] = links.map((link: Link) => {
-    return getOne(link.id) 
-  })
-  return await Promise.all(linkRequests)
+const getAll = async (q: string) => {
+  let query = knex('link')
+    .select('link.id', 'link.title', 'link.url', 'link.created_at')
+    .orderBy('title', 'asc')
+  if (q) {
+    query = query.innerJoin('link_tags', 'link.id', 'link_tags.link_id')
+      .innerJoin('tag', 'tag.id', 'link_tags.tag_id')
+      .where(knex.raw('LOWER("title") LIKE ?', `%${q}%`))
+      .orWhere(knex.raw('LOWER("name") LIKE ?', `%${q}%`))
+  }
+  const links: Link[] = await query 
+  if (links.length > 0) {
+    const linkRequests: Promise<any>[] = links.map((link: Link) => {
+      return getOne(link.id) 
+    })
+    const data = await Promise.all(linkRequests)
+    return uniqBy(data, 'id')
+  } else {
+    return links
+  }
 }
 
 const add = async (link: any) => {

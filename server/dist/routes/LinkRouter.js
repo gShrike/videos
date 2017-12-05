@@ -17,7 +17,8 @@ class LinkRouter {
     }
     getAll(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const links = yield link_queries_1.default.getAll();
+            let query = req.query.q ? req.query.q.toLowerCase() : undefined;
+            const links = yield link_queries_1.default.getAll(query);
             res.json({ message: 'Success', links });
         });
     }

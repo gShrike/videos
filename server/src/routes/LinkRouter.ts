@@ -11,7 +11,8 @@ export class LinkRouter {
   }
 
   public async getAll(req: Request, res: Response, next: NextFunction) {
-    const links: Link[] = await linkQueries.getAll()
+    let query = req.query.q ? req.query.q.toLowerCase() : undefined
+    const links: Link[] = await linkQueries.getAll(query)
     res.json({ message: 'Success', links })
   }
 
