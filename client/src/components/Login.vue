@@ -7,7 +7,7 @@
           <input v-on:click="gitLogin" type="button" class="github show" value="Github"/>
           <h1> ------- or ------- </h1>
           <div v-if="error" class="errors">
-            <p> Invalid Name or Password </p>
+            <p> {{ error }} </p>
           </div>
           <label for="name">Name: </label>
           <input type="text" name="name" id="name"/>
@@ -34,8 +34,10 @@ export default {
   },
   mounted() {
     const query = qs.parse(location.search.substr(1));
-    if (query.error) {
-      this.error = true;
+    if (query.error === 'invalid') {
+      this.error = 'Invalid Name or Password';
+    } else if (query.error === 'unauthorized') {
+      this.error = 'Unathorized Account';
     }
   },
   methods: {

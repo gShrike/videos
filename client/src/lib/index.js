@@ -1,6 +1,8 @@
 import URL from 'url-parse';
 import qs from 'qs';
 
+import config from '../config';
+
 export default {
   addEmbed: links => (
     links.map((link) => {
@@ -13,4 +15,27 @@ export default {
       return embedLink;
     })
   ),
+  isLoggedIn: async () => {
+    const token = localStorage.getItem('token');
+    let valid = false;
+    if (token) {
+      let logout = false;
+      try {
+        const data = await fetch(`${config.SERVER_URL}/login/validate?token=${token}`);
+        const response = await data.json();
+        valid = response.valid;
+        logout = !valid;
+      } catch (e) {
+        logout = true;
+      }
+      if (logout) {
+        this.logout();
+      }
+    }
+    return valid;
+  },
+  logout: () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  },
 };

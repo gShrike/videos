@@ -21,8 +21,8 @@ class App {
         this.app.use(logger('dev'));
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
-        this.app.use(auth_1.default.initialize());
-        this.app.use(auth_1.default.session());
+        this.app.use(auth_1.default.passport.initialize());
+        this.app.use(auth_1.default.passport.session());
     }
     routes() {
         let router = express.Router();

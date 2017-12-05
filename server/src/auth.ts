@@ -1,6 +1,21 @@
 import * as passport from 'passport'
-
+import * as jwt from 'jsonwebtoken'
 import { Strategy as GithubStrategy } from 'passport-github2'
+
+const handleUser = function(user, done): void {
+  done(null, user)
+}
+
+const adminEmails = ['berto.ort@gmail.com']
+
+const createToken = function(payload) {
+  const data = { name: payload.profile.displayName, email: payload.profile.email }
+  return jwt.sign(data, process.env.TOKEN_SECRET, { expiresIn: '1d' })
+} 
+
+const isAdmin = function(enteredEmail) {
+  return adminEmails.some(email => email === enteredEmail)
+}
 
 passport.serializeUser(handleUser)
 
@@ -18,8 +33,8 @@ passport.use(new GithubStrategy({
   }
 ));
 
-function handleUser(user, done): void {
-  done(null, user)
+export default {
+  passport,
+  isAdmin,
+  createToken
 }
-
-export default passport

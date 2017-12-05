@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
 const tag_queries_1 = require("./tag.queries");
 const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
-    const link = yield connection_1.default('link').select().where('id', id).first();
+    const link = yield connection_1.default('link').select().where('id', id).orderBy('title', 'asc').first();
     const linkTags = yield connection_1.default('link_tags').select().where('link_id', id);
     const tagRequests = linkTags.map((linkTag) => {
         return connection_1.default('tag').select().where('id', linkTag.tag_id).first();
@@ -47,6 +47,9 @@ const remove = (id) => {
 const removeTag = (link_id, tag_id) => {
     return connection_1.default('link_tags').del().where({ link_id, tag_id });
 };
+const removeTags = (link_id) => {
+    return connection_1.default('link_tags').del().where({ link_id });
+};
 exports.default = {
     getAll,
     getOne,
@@ -54,5 +57,6 @@ exports.default = {
     addTag,
     edit,
     remove,
+    removeTags,
     removeTag
 };

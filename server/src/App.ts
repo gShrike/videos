@@ -27,8 +27,8 @@ class App {
     this.app.use(logger('dev'))
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: false }))
-    this.app.use(auth.initialize())
-    this.app.use(auth.session())
+    this.app.use(auth.passport.initialize())
+    this.app.use(auth.passport.session())
   }
 
   private routes(): void {

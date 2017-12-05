@@ -5,6 +5,7 @@ const up = function (knex: Knex): Promise<any> {
     table.increments()
     table.text('url').notNullable()
     table.text('title').notNullable()
+    table.timestamp('created_at').defaultTo(knex.fn.now())
   })
 };
 

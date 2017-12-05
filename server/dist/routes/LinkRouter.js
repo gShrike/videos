@@ -89,6 +89,18 @@ class LinkRouter {
             }
         });
     }
+    removeTags(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            try {
+                yield link_queries_1.default.removeTags(id);
+                res.json({ message: 'Success' });
+            }
+            catch (error) {
+                res.json({ message: 'Unable to remove tags.', error });
+            }
+        });
+    }
     init() {
         this.router.get('/', this.getAll);
         this.router.get('/:id', this.getOne);
@@ -96,6 +108,7 @@ class LinkRouter {
         this.router.post('/:id/tags', this.addTag);
         this.router.put('/:id', this.edit);
         this.router.delete('/:id', this.remove);
+        this.router.delete('/:id/tags', this.removeTags);
         this.router.delete('/:id/tags/:tag_id', this.removeTag);
     }
 }

@@ -8,9 +8,9 @@
         </router-link>
       </h3>
       <nav>
-        <div class="col"><router-link to="links">links</router-link></div>
-        <div v-if="!loggedIn" class="col"><router-link to="login">login</router-link></div>
-        <div v-if="loggedIn" class="col"><router-link to="new">new</router-link></div>
+        <div class="col"><router-link to="/links">links</router-link></div>
+        <div v-if="!loggedIn" class="col"><router-link to="/login">login</router-link></div>
+        <div v-if="loggedIn" class="col"><router-link to="/new">new</router-link></div>
         <div v-if="loggedIn" v-on:click="logout" class="col"><a href="#">logout</a></div>
       </nav>
     </div>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import config from '../config';
+import lib from '../lib';
 
 export default {
   name: 'MainHeader',
@@ -29,23 +29,11 @@ export default {
     };
   },
   async mounted() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const data = await fetch(`${config.SERVER_URL}/login/validate?token=${token}`);
-        const response = await data.json();
-        this.loggedIn = response.valid;
-      } catch (e) {
-        this.logout();
-        this.loggedIn = false;
-      }
-    }
+    this.loggedIn = await lib.isLoggedIn();
   },
   methods: {
     logout() {
-      localStorage.removeItem('token');
-      this.loggedIn = false;
-      this.$router.push({ path: 'home' });
+      lib.logout();
     },
   },
 };

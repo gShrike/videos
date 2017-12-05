@@ -4,7 +4,7 @@ import Tag from './Tag.model'
 import tagQueries from './tag.queries'
 
 const getOne = async (id: number) => {
-  const link: any = await knex('link').select().where('id', id).first()
+  const link: any = await knex('link').select().where('id', id).orderBy('title', 'asc').first()
   const linkTags: any = await knex('link_tags').select().where('link_id', id)
   const tagRequests: Promise<Tag>[] = linkTags.map((linkTag: any) => {
     return knex('tag').select().where('id', linkTag.tag_id).first()
@@ -47,6 +47,10 @@ const removeTag = (link_id: number, tag_id: number) => {
   return knex('link_tags').del().where({link_id, tag_id})
 }
 
+const removeTags = (link_id: number) => {
+  return knex('link_tags').del().where({link_id})
+}
+
 export default {
   getAll,
   getOne,
@@ -54,5 +58,6 @@ export default {
   addTag,
   edit,
   remove,
+  removeTags,
   removeTag
 }

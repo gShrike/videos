@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h2>New Link</h2>
+    <h2>Edit Link</h2>
     <form>
       <div v-if="error" class="errors">
         <p> {{errorMessage}} </p>
@@ -16,7 +16,8 @@
         <p class="tag" v-on:click="removeTag(index)" v-for="(tag, index) in tags"> {{tag}} </p> 
         <p v-if="tags.length === 0"> No Tags </p>
       </section>
-      <input class="show" v-on:click="submitLink" type="button" value="add"/>
+      <input class="show" v-on:click="submitLink" type="button" value="update"/>
+      <input type="button" class="delete" v-on:click="remove" value="delete" />
     </form>
   </main>
 </template>
@@ -25,42 +26,53 @@
 import config from '../config';
 
 export default {
-  name: 'New',
+  name: 'Edit',
   data() {
     return {
-      addURL: `${config.SERVER_URL}/api/v1/links`,
+      editURL: `${config.SERVER_URL}/api/v1/links`,
       tags: [],
       token: '',
       username: '',
       title: '',
       url: '',
       tag: '',
+      link: {},
       headers: {},
       error: false,
     };
   },
-  mounted() {
+  async mounted() {
     const token = localStorage.getItem('token');
+    const linkID = this.$route.params.id;
     if (!token) {
       this.logout();
     } else {
       this.token = token;
-      this.tags.push(JSON.parse(atob(token.split('.')[1])).name);
+      this.link = await this.getLink(linkID);
+      this.tags = this.link.tags.map(tag => tag.name);
+      this.title = this.link.title;
+      this.url = this.link.url;
     }
   },
   methods: {
     async submitLink() {
       if (!this.isValid()) {
         try {
-          const link = await this.postLink();
-          await this.postTags(link);
-          this.$router.push({ path: 'links' });
+          await this.editLink();
+          await this.editTags();
+          this.$router.push({ path: '/links' });
         } catch (e) {
-          this.errorMessage = 'Unable to Add Link';
+          this.errorMessage = 'Unable to Edit Link';
         }
       }
     },
-    async postLink() {
+    getLink(id) {
+      return fetch(`${config.SERVER_URL}/api/v1/links/${id}`)
+        .then(data => data.json())
+        .then(response => response.link)
+        .catch(() => this.$router.push({ path: '/links' }));
+    },
+    async editLink() {
       const body = {
         title: this.title,
         url: this.url,
@@ -70,12 +82,12 @@ export default {
       headers.append('Authorization', `Bearer ${this.token}`);
       this.headers = headers;
       const settings = {
-        method: 'post',
+        method: 'put',
         body: JSON.stringify(body),
         headers,
       };
       try {
-        const data = await fetch(`${config.SERVER_URL}/api/v1/links`, settings);
+        const data = await fetch(`${config.SERVER_URL}/api/v1/links/${this.link.id}`, settings);
         const response = await data.json();
         if (response.error) {
           this.errorMessage = 'Unable to Add Link';
@@ -87,7 +99,8 @@ export default {
       }
       return null;
     },
-    async postTags(link) {
+    async editTags() {
+      await this.removeTags(this.link.id);
       const tagRequests = this.tags.map((tag) => {
         const tagBody = { tag };
         const settings = {
@@ -95,7 +108,7 @@ export default {
           body: JSON.stringify(tagBody),
           headers: this.headers,
         };
-        return fetch(`${config.SERVER_URL}/api/v1/links/${link.id}/tags`, settings);
+        return fetch(`${config.SERVER_URL}/api/v1/links/${this.link.id}/tags`, settings);
       });
       return Promise.all(tagRequests);
     },
@@ -104,6 +117,13 @@ export default {
         this.tags.push(this.tag);
         this.tag = '';
       }
+    },
+    removeTags() {
+      const settings = {
+        method: 'delete',
+        headers: this.headers,
+      };
+      return fetch(`${config.SERVER_URL}/api/v1/links/${this.link.id}/tags`, settings);
     },
     removeTag(index) {
       this.tags = this.tags.filter((_, i) => i !== index);
@@ -122,6 +142,14 @@ export default {
         this.errorMessage = 'Invalid Title or URL';
       }
       return valid;
+    },
+    async remove() {
+      const settings = {
+        method: 'delete',
+        headers: this.headers,
+      };
+      await fetch(`${config.SERVER_URL}/api/v1/links/${this.link.id}`, settings);
+      this.$router.push({ path: '/links' });
     },
   },
 };
