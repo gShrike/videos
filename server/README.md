@@ -26,3 +26,7 @@ heroku run npm run migrate
 heroku run npm run seed
 heroku open
 ```
+
+## ERD
+
+![erd](./erd.png)
