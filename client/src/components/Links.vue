@@ -6,8 +6,9 @@
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
     <ul class="links" v-for="link in links">
       <li>
-        <h2><a :href="link.url" target="_blank">{{link.title}}</a></h2>
         <div class="tags">
+          <h4><a :href="link.url" target="_blank">{{link.title}}</a></h4>
+          <p class="subtitle"> {{ link.created_at | formatDate }} </p>
           <ul>
             <li v-for="tag in link.tags" v-on:click="searchTag(tag.name)" class="tag">{{tag.name}}</li>
           </ul>
@@ -21,6 +22,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import config from '../config';
 import lib from '../lib';
 
@@ -62,6 +64,11 @@ export default {
     },
     edit(id) {
       this.$router.push({ name: 'Edit', params: { id } });
+    },
+  },
+  filters: {
+    formatDate(date) {
+      return moment(date).format('MMMM Do YYYY');
     },
   },
 };
