@@ -1,7 +1,7 @@
 <template>
   <main>
     <h2>New Link</h2>
-    <form>
+    <form class="tags">
       <div v-if="error" class="errors">
         <p> {{errorMessage}} </p>
       </div>
@@ -12,10 +12,10 @@
       <br>
       <label for="tag">Add a Tag: </label>
       <input type="text" v-model="tag" id="tag" v-on:keyup.13="addTag"/>
-      <section class="tags">
-        <p class="tag" v-on:click="removeTag(index)" v-for="(tag, index) in tags"> {{tag}} </p> 
-        <p v-if="tags.length === 0"> No Tags </p>
-      </section>
+      <br>
+      <span class="tag" v-on:click="removeTag(index)" v-for="(tag, index) in tags"> {{tag}} </span> 
+      <span v-if="tags.length === 0"> No Tags </span>
+      <br>
       <input class="show" v-on:click="submitLink" type="button" value="add"/>
     </form>
   </main>
