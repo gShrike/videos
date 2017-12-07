@@ -1,7 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_1 = require("../auth");
+const user_queries_1 = require("../db/user.queries");
 const jwt = require("jsonwebtoken");
 class LoginRouter {
     constructor() {
@@ -10,21 +19,29 @@ class LoginRouter {
     }
     gitCallback(req, res, next) {
         auth_1.default.passport.authenticate('github', function (error, payload) {
-            if (error) {
-                res.redirect(`${process.env.CLIENT_URL}/login`);
-            }
-            else if (auth_1.default.isAdmin(payload.profile.emails[0].value)) {
-                const token = auth_1.default.createToken(payload);
-                res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
-            }
-            else {
-                res.redirect(`${process.env.CLIENT_URL}/login?error=unauthorized`);
-            }
+            return __awaiter(this, void 0, void 0, function* () {
+                if (error) {
+                    res.redirect(`${process.env.CLIENT_URL}/login`);
+                }
+                else {
+                    let user = { name: payload.profile.displayName, email: payload.profile.emails[0].value };
+                    const dbUser = yield user_queries_1.default.getOneByEmail(user.email);
+                    if (!dbUser) {
+                        const newUser = yield user_queries_1.default.addOne(user.name, user.email);
+                        user = newUser[0];
+                    }
+                    else {
+                        user = dbUser;
+                    }
+                    const token = auth_1.default.createToken(Object.assign({}, user));
+                    res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
+                }
+            });
         })(req, res, next);
     }
     login(req, res, next) {
         if (req.body.name === process.env.ADMIN_NAME && req.body.password === process.env.ADMIN_PASSWORD) {
-            const token = auth_1.default.createToken({ profile: { name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com' } });
+            const token = auth_1.default.createToken({ name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com', isAdmin: true });
             res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
         }
         else {

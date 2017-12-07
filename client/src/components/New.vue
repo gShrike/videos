@@ -23,6 +23,7 @@
 
 <script>
 import config from '../config';
+import lib from '../lib';
 
 export default {
   name: 'New',
@@ -41,16 +42,17 @@ export default {
   },
   mounted() {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const user = lib.getTokenUser();
+    if (!user.isAdmin) {
       this.logout();
     } else {
       this.token = token;
-      this.tags.push(JSON.parse(atob(token.split('.')[1])).name);
+      this.tags.push(user.name);
     }
   },
   methods: {
     async submitLink() {
-      if (!this.isValid()) {
+      if (this.isValid()) {
         try {
           const link = await this.postLink();
           await this.postTags(link);
@@ -116,12 +118,12 @@ export default {
       window.location.href = '/';
     },
     isValid() {
-      const valid = this.title.length === 0 || this.url.length === 0;
-      if (!valid) {
-        this.error = valid;
+      const invalid = this.title.length === 0 || this.url.length === 0;
+      if (invalid) {
+        this.error = invalid;
         this.errorMessage = 'Invalid Title or URL';
       }
-      return valid;
+      return !invalid;
     },
   },
 };

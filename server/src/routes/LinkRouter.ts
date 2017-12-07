@@ -1,6 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express'
 import Link from '../db/Link.model'
 import linkQueries from '../db/link.queries'
+import auth from '../auth'
 
 export class LinkRouter {
   router: Router
@@ -86,6 +87,7 @@ export class LinkRouter {
   init() {
     this.router.get('/', this.getAll)
     this.router.get('/:id', this.getOne)
+    this.router.use(auth.validateAdmin)
     this.router.post('/', this.add)
     this.router.post('/:id/tags', this.addTag)
     this.router.put('/:id', this.edit)

@@ -1,5 +1,6 @@
 import {Router, Request, Response, NextFunction} from 'express'
 import auth from '../auth'
+import userQueries from '../db/user.queries'
 import * as jwt from 'jsonwebtoken'
 
 export class LoginRouter {
@@ -11,21 +12,27 @@ export class LoginRouter {
   }
 
   public gitCallback(req: Request, res: Response, next: NextFunction) {
-    auth.passport.authenticate('github', function(error: any, payload: any) {
+    auth.passport.authenticate('github', async function(error: any, payload: any) {
       if (error) {
         res.redirect(`${process.env.CLIENT_URL}/login`)
-      } else if (auth.isAdmin(payload.profile.emails[0].value)) {
-        const token = auth.createToken(payload)
-        res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
       } else {
-        res.redirect(`${process.env.CLIENT_URL}/login?error=unauthorized`)
-      }
+        let user = { name: payload.profile.displayName, email: payload.profile.emails[0].value }
+        const dbUser = await userQueries.getOneByEmail(user.email)
+        if (!dbUser) {
+          const newUser = await userQueries.addOne(user.name, user.email)
+          user = newUser[0]
+        } else {
+          user = dbUser
+        }
+        const token = auth.createToken(Object.assign({}, user))
+        res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
+      } 
     })(req, res, next)
   }
 
   public login(req: Request, res: Response, next: NextFunction) {
     if (req.body.name === process.env.ADMIN_NAME && req.body.password === process.env.ADMIN_PASSWORD) {
-      const token = auth.createToken({ profile: {name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com' } })
+      const token = auth.createToken({ name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com', isAdmin: true })
       res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
     } else {
       res.redirect(`${process.env.CLIENT_URL}/login?error=invalid`)

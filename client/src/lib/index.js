@@ -34,6 +34,13 @@ export default {
     }
     return valid;
   },
+  getTokenUser: () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return JSON.parse(atob(token.split('.')[1]));
+    }
+    return undefined;
+  },
   logout: () => {
     localStorage.removeItem('token');
     window.location.href = '/';

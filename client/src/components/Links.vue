@@ -13,7 +13,7 @@
             <li v-for="tag in link.tags" v-on:click="searchTag(tag.name)" class="tag">{{tag.name}}</li>
           </ul>
           <input type="button" class="show" v-on:click="toggleView(link)" v-if="link.embed" value="View" />
-          <input type="button" class="edit" v-on:click="edit(link.id)" v-if="loggedIn" value="Edit" />
+          <input type="button" class="edit" v-on:click="edit(link.id)" v-if="isAdmin" value="Edit" />
           <iframe  v-if="link.embed && link.show" width="560" height="315" :src="link.embed" frameborder="0" allowfullscreen></iframe>
         </div>
       </li>
@@ -33,10 +33,16 @@ export default {
     query: '',
     loading: true,
     loggedIn: false,
+    isAdmin: false,
     error: false,
   }),
   async mounted() {
+    this.query = this.$route.query.q;
     this.loggedIn = await lib.isLoggedIn();
+    const user = lib.getTokenUser();
+    if (user) {
+      this.isAdmin = user.isAdmin;
+    }
     this.getLinks();
   },
   methods: {
@@ -44,6 +50,7 @@ export default {
       try {
         let url = `${config.SERVER_URL}/api/v1/links`;
         if (this.query) {
+          this.$router.push({ query: { q: this.query } });
           url += `?q=${this.query}`;
         }
         const data = await fetch(url);

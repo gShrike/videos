@@ -6,16 +6,9 @@ const handleUser = function(user, done): void {
   done(null, user)
 }
 
-const adminEmails = ['berto.ort@gmail.com']
-
-const createToken = function(payload) {
-  const data = { name: payload.profile.displayName, email: payload.profile.email }
+const createToken = function(data) {
   return jwt.sign(data, process.env.TOKEN_SECRET, { expiresIn: '1d' })
 } 
-
-const isAdmin = function(enteredEmail) {
-  return adminEmails.some(email => email === enteredEmail)
-}
 
 passport.serializeUser(handleUser)
 
@@ -33,8 +26,31 @@ passport.use(new GithubStrategy({
   }
 ));
 
+const validateAdmin = function(req: Request, res: Response, next: NextFunction) {
+  const authorization = req.get('Authorization')
+  if (authorization) {
+    const token = authorization.substring(7)
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
+    decoded.isAdmin ?  next() : res.json({ error: 'Unauthorized' })
+  } else {
+    res.json({ error: 'Unauthorized' })
+  }
+}
+
+const validateUser = function(req: Request, res: Response, next: NextFunction) {
+  const authorization = req.get('Authorization')
+  if (authorization) {
+    const token = authorization.substring(7)
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
+    decoded ?  next() : res.json({ error: 'Unauthorized' })
+  } else {
+    res.json({ error: 'Unauthorized' })
+  }
+}
+
 export default {
   passport,
-  isAdmin,
-  createToken
+  createToken,
+  validateAdmin,
+  validateUser
 }

@@ -24,6 +24,7 @@
 
 <script>
 import config from '../config';
+import lib from '../lib';
 
 export default {
   name: 'Edit',
@@ -39,12 +40,17 @@ export default {
       link: {},
       headers: {},
       error: false,
+      isAdmin: false,
     };
   },
   async mounted() {
     const token = localStorage.getItem('token');
     const linkID = this.$route.params.id;
-    if (!token) {
+    const user = lib.getTokenUser();
+    if (user) {
+      this.isAdmin = user.isAdmin;
+    }
+    if (!this.isAdmin) {
       this.logout();
     } else {
       this.token = token;

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const link_queries_1 = require("../db/link.queries");
+const auth_1 = require("../auth");
 class LinkRouter {
     constructor() {
         this.router = express_1.Router();
@@ -105,6 +106,7 @@ class LinkRouter {
     init() {
         this.router.get('/', this.getAll);
         this.router.get('/:id', this.getOne);
+        this.router.use(auth_1.default.validateAdmin);
         this.router.post('/', this.add);
         this.router.post('/:id/tags', this.addTag);
         this.router.put('/:id', this.edit);

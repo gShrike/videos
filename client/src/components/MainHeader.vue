@@ -10,7 +10,7 @@
       <nav>
         <div class="col"><router-link to="/links">links</router-link></div>
         <div v-if="!loggedIn" class="col"><router-link to="/login">login</router-link></div>
-        <div v-if="loggedIn" class="col"><router-link to="/new">new</router-link></div>
+        <div v-if="loggedIn && isAdmin" class="col"><router-link to="/new">new</router-link></div>
         <div v-if="loggedIn" v-on:click="logout" class="col"><a href="#">logout</a></div>
       </nav>
     </div>
@@ -30,6 +30,10 @@ export default {
   },
   async mounted() {
     this.loggedIn = await lib.isLoggedIn();
+    const user = lib.getTokenUser();
+    if (user) {
+      this.isAdmin = user.isAdmin;
+    }
   },
   methods: {
     logout() {

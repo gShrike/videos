@@ -1,6 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express'
 import Tag from '../db/Tag.model'
 import tagQueries from '../db/tag.queries'
+import auth from '../auth'
 
 export class TagRouter {
   router: Router
@@ -53,6 +54,7 @@ export class TagRouter {
   init() {
     this.router.get('/', this.getAll)
     this.router.get('/:id', this.getOne)
+    this.router.use(auth.validateAdmin)
     this.router.post('/', this.add)
     this.router.put('/:id', this.edit)
     this.router.delete('/:id', this.remove)
