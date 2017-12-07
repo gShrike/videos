@@ -20,7 +20,7 @@ const getOne = async (id: number, user: any) => {
   const ratings: any = await knex('rating').select('rating').where('link_id', id)
   if (user) {
     const userRating = await ratingQueries.getOne(user.id, id)
-    link.user_rating = userRating.rating
+    link.user_rating = userRating ? userRating.rating : 0;
   }
   link.rating = ratings.reduce((total, data) => total + data.rating, 0)
   link.tags = await Promise.all(tagRequests)

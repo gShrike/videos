@@ -26,7 +26,7 @@ const getOne = (id, user) => __awaiter(this, void 0, void 0, function* () {
     const ratings = yield connection_1.default('rating').select('rating').where('link_id', id);
     if (user) {
         const userRating = yield rating_queries_1.default.getOne(user.id, id);
-        link.user_rating = userRating.rating;
+        link.user_rating = userRating ? userRating.rating : 0;
     }
     link.rating = ratings.reduce((total, data) => total + data.rating, 0);
     link.tags = yield Promise.all(tagRequests);
