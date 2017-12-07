@@ -32,7 +32,7 @@ export class LoginRouter {
 
   public login(req: Request, res: Response, next: NextFunction) {
     if (req.body.name === process.env.ADMIN_NAME && req.body.password === process.env.ADMIN_PASSWORD) {
-      const token = auth.createToken({ name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com', isAdmin: true })
+      const token = auth.createToken({ id: 1, name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com', isAdmin: true })
       res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
     } else {
       res.redirect(`${process.env.CLIENT_URL}/login?error=invalid`)

@@ -26,12 +26,18 @@ passport.use(new GithubStrategy({
   }
 ));
 
-const validateAdmin = function(req: Request, res: Response, next: NextFunction) {
+const getUser = function(req: Request) {
   const authorization = req.get('Authorization')
   if (authorization) {
     const token = authorization.substring(7)
-    const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
-    decoded.isAdmin ?  next() : res.json({ error: 'Unauthorized' })
+    return jwt.verify(token, process.env.TOKEN_SECRET)
+  } 
+}
+
+const validateAdmin = function(req: Request, res: Response, next: NextFunction) {
+  const user = getUser(req)
+  if (user) {
+    user.isAdmin ?  next() : res.json({ error: 'Unauthorized' })
   } else {
     res.json({ error: 'Unauthorized' })
   }
@@ -52,5 +58,6 @@ export default {
   passport,
   createToken,
   validateAdmin,
+  getUser,
   validateUser
 }

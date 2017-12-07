@@ -10,22 +10,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
 const tag_queries_1 = require("./tag.queries");
+const rating_queries_1 = require("./rating.queries");
 const uniqBy = (list, key) => {
     const seen = {};
     return list.filter(function (item) {
         return seen.hasOwnProperty(item[key]) ? false : (seen[item[key]] = true);
     });
 };
-const getOne = (id) => __awaiter(this, void 0, void 0, function* () {
-    const link = yield connection_1.default('link').select().where('id', id).first();
+const getOne = (id, user) => __awaiter(this, void 0, void 0, function* () {
+    const link = yield connection_1.default('link').select().where('link.id', id).first();
     const linkTags = yield connection_1.default('link_tags').select().where('link_id', id);
     const tagRequests = linkTags.map((linkTag) => {
         return connection_1.default('tag').select().where('id', linkTag.tag_id).first();
     });
+    const ratings = yield connection_1.default('rating').select('rating').where('link_id', id);
+    if (user) {
+        const userRating = yield rating_queries_1.default.getOne(user.id, id);
+        link.user_rating = userRating.rating;
+    }
+    link.rating = ratings.reduce((total, data) => total + data.rating, 0);
     link.tags = yield Promise.all(tagRequests);
     return link;
 });
-const getAll = (q) => __awaiter(this, void 0, void 0, function* () {
+const getAll = (q, user) => __awaiter(this, void 0, void 0, function* () {
     let query = connection_1.default('link')
         .select('link.id', 'link.title', 'link.url', 'link.created_at')
         .orderBy('title', 'asc');
@@ -38,7 +45,7 @@ const getAll = (q) => __awaiter(this, void 0, void 0, function* () {
     const links = yield query;
     if (links.length > 0) {
         const linkRequests = links.map((link) => {
-            return getOne(link.id);
+            return getOne(link.id, user);
         });
         const data = yield Promise.all(linkRequests);
         return uniqBy(data, 'id');

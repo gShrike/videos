@@ -1,6 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express'
 import Link from '../db/Link.model'
 import linkQueries from '../db/link.queries'
+import ratingQueries from '../db/rating.queries'
 import auth from '../auth'
 
 export class LinkRouter {
@@ -13,7 +14,8 @@ export class LinkRouter {
 
   public async getAll(req: Request, res: Response, next: NextFunction) {
     let query = req.query.q ? req.query.q.toLowerCase() : undefined
-    const links: Link[] = await linkQueries.getAll(query)
+    const user = auth.getUser(req)
+    const links: Link[] = await linkQueries.getAll(query, user)
     res.json({ message: 'Success', links })
   }
 
@@ -53,6 +55,16 @@ export class LinkRouter {
     res.json({ message: 'Success', link })
   }
 
+  public async rate(req: Request, res: Response, next: NextFunction) {
+    const id: number = parseInt(req.params.id)
+    try {
+      const result = await ratingQueries.setRating(req.body.rating, req.body.user_id, id)
+      res.json({ message: 'Success' })
+    } catch(error) {
+      res.json({ message: 'Unable to Rate', error })
+    }
+  }
+
   public async remove(req: Request, res: Response, next: NextFunction) {
     const id: number = parseInt(req.params.id)
     try {
@@ -87,6 +99,8 @@ export class LinkRouter {
   init() {
     this.router.get('/', this.getAll)
     this.router.get('/:id', this.getOne)
+    this.router.use(auth.validateUser)
+    this.router.put('/:id/rating', this.rate)
     this.router.use(auth.validateAdmin)
     this.router.post('/', this.add)
     this.router.post('/:id/tags', this.addTag)

@@ -2,25 +2,32 @@ import knex from './connection'
 import Link from './Link.model'
 import Tag from './Tag.model'
 import tagQueries from './tag.queries'
+import ratingQueries from './rating.queries'
 
 const uniqBy = (list, key) => {
-  const seen = {};
+  const seen = {}
   return list.filter(function(item) {
-    return seen.hasOwnProperty(item[key]) ? false : (seen[item[key]] = true);
+    return seen.hasOwnProperty(item[key]) ? false : (seen[item[key]] = true)
   })
 }
 
-const getOne = async (id: number) => {
-  const link: any = await knex('link').select().where('id', id).first()
+const getOne = async (id: number, user: any) => {
+  const link: any = await knex('link').select().where('link.id', id).first()
   const linkTags: any = await knex('link_tags').select().where('link_id', id)
   const tagRequests: Promise<Tag>[] = linkTags.map((linkTag: any) => {
     return knex('tag').select().where('id', linkTag.tag_id).first()
   })
+  const ratings: any = await knex('rating').select('rating').where('link_id', id)
+  if (user) {
+    const userRating = await ratingQueries.getOne(user.id, id)
+    link.user_rating = userRating.rating
+  }
+  link.rating = ratings.reduce((total, data) => total + data.rating, 0)
   link.tags = await Promise.all(tagRequests)
   return link
 }
 
-const getAll = async (q: string) => {
+const getAll = async (q: string, user: any) => {
   let query = knex('link')
     .select('link.id', 'link.title', 'link.url', 'link.created_at')
     .orderBy('title', 'asc')
@@ -33,7 +40,7 @@ const getAll = async (q: string) => {
   const links: Link[] = await query 
   if (links.length > 0) {
     const linkRequests: Promise<any>[] = links.map((link: Link) => {
-      return getOne(link.id) 
+      return getOne(link.id, user) 
     })
     const data = await Promise.all(linkRequests)
     return uniqBy(data, 'id')

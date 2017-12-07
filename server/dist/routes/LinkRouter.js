@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const link_queries_1 = require("../db/link.queries");
+const rating_queries_1 = require("../db/rating.queries");
 const auth_1 = require("../auth");
 class LinkRouter {
     constructor() {
@@ -19,7 +20,8 @@ class LinkRouter {
     getAll(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = req.query.q ? req.query.q.toLowerCase() : undefined;
-            const links = yield link_queries_1.default.getAll(query);
+            const user = auth_1.default.getUser(req);
+            const links = yield link_queries_1.default.getAll(query, user);
             res.json({ message: 'Success', links });
         });
     }
@@ -66,6 +68,18 @@ class LinkRouter {
             res.json({ message: 'Success', link });
         });
     }
+    rate(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = parseInt(req.params.id);
+            try {
+                const result = yield rating_queries_1.default.setRating(req.body.rating, req.body.user_id, id);
+                res.json({ message: 'Success' });
+            }
+            catch (error) {
+                res.json({ message: 'Unable to Rate', error });
+            }
+        });
+    }
     remove(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = parseInt(req.params.id);
@@ -106,6 +120,8 @@ class LinkRouter {
     init() {
         this.router.get('/', this.getAll);
         this.router.get('/:id', this.getOne);
+        this.router.use(auth_1.default.validateUser);
+        this.router.put('/:id/rating', this.rate);
         this.router.use(auth_1.default.validateAdmin);
         this.router.post('/', this.add);
         this.router.post('/:id/tags', this.addTag);

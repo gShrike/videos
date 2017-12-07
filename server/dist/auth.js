@@ -20,12 +20,17 @@ passport.use(new passport_github2_1.Strategy({
         done(null, { profile, token: accessToken });
     });
 }));
-const validateAdmin = function (req, res, next) {
+const getUser = function (req) {
     const authorization = req.get('Authorization');
     if (authorization) {
         const token = authorization.substring(7);
-        const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-        decoded.isAdmin ? next() : res.json({ error: 'Unauthorized' });
+        return jwt.verify(token, process.env.TOKEN_SECRET);
+    }
+};
+const validateAdmin = function (req, res, next) {
+    const user = getUser(req);
+    if (user) {
+        user.isAdmin ? next() : res.json({ error: 'Unauthorized' });
     }
     else {
         res.json({ error: 'Unauthorized' });
@@ -46,5 +51,6 @@ exports.default = {
     passport,
     createToken,
     validateAdmin,
+    getUser,
     validateUser
 };

@@ -1,15 +1,19 @@
 import knex from './connection'
 
-const getByUser = (user_id: number) => {
+const getOne = (user_id: number, link_id: number) => {
+  return knex('rating').where({ user_id, link_id }).first()
+}
+
+const getAllByUser = (user_id: number) => {
   return knex('rating').where({ user_id })
 }
 
-const getByLink = (link_id: number) => {
+const getAllByLink = (link_id: number) => {
   return knex('rating').where({ link_id })
 }
 
 const setRating = (rating: number, user_id: number, link_id: number) => {
-  return knex('rating').where({ user_id, link_id })
+  return knex('rating').select().where({ user_id, link_id })
     .then((ratings) => {
       if (ratings.length > 0) {
         return knex('rating')
@@ -22,7 +26,8 @@ const setRating = (rating: number, user_id: number, link_id: number) => {
 }
 
 export default {
-  getByUser,
-  getByLink,
+  getOne,
+  getAllByUser,
+  getAllByLink,
   setRating
 }
