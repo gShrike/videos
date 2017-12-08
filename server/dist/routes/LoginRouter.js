@@ -49,12 +49,13 @@ class LoginRouter {
         }
     }
     validate(req, res, next) {
-        const token = jwt.verify(req.query.token, process.env.TOKEN_SECRET);
-        let valid = false;
-        if (token) {
-            valid = true;
+        try {
+            const token = jwt.verify(req.query.token, process.env.TOKEN_SECRET);
+            res.json({ valid: true });
         }
-        res.json({ valid });
+        catch (error) {
+            res.json({ valid: false, error });
+        }
     }
     init() {
         this.router.get('/github', auth_1.default.passport.authenticate('github', { scope: ['user:email'] }));

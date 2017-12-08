@@ -15,20 +15,18 @@ export default {
       return embedLink;
     })
   ),
-  isLoggedIn: async () => {
+  async isLoggedIn() {
     const token = localStorage.getItem('token');
     let valid = false;
     if (token) {
-      let logout = false;
       try {
         const data = await fetch(`${config.SERVER_URL}/login/validate?token=${token}`);
         const response = await data.json();
         valid = response.valid;
-        logout = !valid;
       } catch (e) {
-        logout = true;
+        this.logout();
       }
-      if (logout) {
+      if (!valid) {
         this.logout();
       }
     }

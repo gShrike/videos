@@ -40,12 +40,12 @@ export class LoginRouter {
   }
 
   public validate(req: Request, res: Response, next: NextFunction) {
-    const token = jwt.verify(req.query.token, process.env.TOKEN_SECRET)
-    let valid = false
-    if (token) {
-      valid = true 
+    try {
+      const token = jwt.verify(req.query.token, process.env.TOKEN_SECRET)
+      res.json({ valid: true })
+    } catch (error) {
+      res.json({ valid: false, error })
     }
-    res.json({ valid })
   }
 
   init() {
