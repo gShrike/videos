@@ -1,3 +1,4 @@
+import {Router, Request, Response, NextFunction} from 'express'
 import * as passport from 'passport'
 import * as jwt from 'jsonwebtoken'
 import { Strategy as GithubStrategy } from 'passport-github2'

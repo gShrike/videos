@@ -57,10 +57,20 @@ class LoginRouter {
             res.json({ valid: false, error });
         }
     }
+    adminize(req, res, next) {
+        const email = req.query.email;
+        if (email && req.query.password === process.env.ADMIN_PASSWORD) {
+            user_queries_1.default.makeAdmin(email).then(() => res.json({ message: `${email} is now admin` }));
+        }
+        else {
+            res.json({ error: 'Invalid Email or Password' });
+        }
+    }
     init() {
         this.router.get('/github', auth_1.default.passport.authenticate('github', { scope: ['user:email'] }));
         this.router.get('/github/callback', this.gitCallback);
         this.router.get('/validate', this.validate);
+        this.router.get('/adminize', this.adminize);
         this.router.post('/', this.login);
     }
 }
