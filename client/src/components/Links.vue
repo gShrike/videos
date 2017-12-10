@@ -4,6 +4,7 @@
     <input class="search" v-model="query" type="text" v-on:change="getLinks"/>
     <h2 v-if="loading">Loading...</h2>
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
+    <h2 v-if="links.length === 0">Nothing Found</h2>
     <ul class="links" v-for="link in links">
       <li>
         <div class="tags">
@@ -63,11 +64,14 @@ export default {
         if (this.query) {
           this.$router.push({ query: { q: this.query } });
           url += `?q=${this.query}`;
+        } else {
+          this.$router.push({ query: {} });
         }
         const settings = {
           method: 'get',
           headers: this.headers,
         }
+        this.loading = true;
         const data = await fetch(url, settings);
         const response = await data.json();
         this.loading = false;
