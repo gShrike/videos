@@ -1,0 +1,17 @@
+{
+  "name": "svupload",
+  "version": "1.0.0",
+  "description": "CLI Video link uploader",
+  "main": "bin/svupload.js",
+  "bin": {
+    "svupload": "bin/svupload.js"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "dotenv": "^4.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "prompt": "^1.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
