@@ -4,7 +4,7 @@
     <input class="search" v-model="query" type="text" v-on:change="getLinks"/>
     <h2 v-if="loading">Loading...</h2>
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
-    <h2 v-if="links.length === 0">Nothing Found</h2>
+    <h2 v-if="links.length === 0 && !loading">Nothing Found</h2>
     <ul class="links" v-for="link in links">
       <li>
         <div class="tags">
