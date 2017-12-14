@@ -11,7 +11,7 @@ const addOne = (name, email, isAdmin = false) => {
     return connection_1.default('user').insert({ name, email, isAdmin }).returning('*');
 };
 const makeAdmin = (email) => {
-    return connection_1.default('user').where({ email }).update({ isAdmin: true });
+    return connection_1.default('user').where({ email }).update({ isAdmin: true }).returning('*');
 };
 exports.default = {
     getOne,

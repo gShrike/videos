@@ -33,7 +33,7 @@ export class LoginRouter {
   public login(req: Request, res: Response, next: NextFunction) {
     if (req.body.name === process.env.ADMIN_NAME && req.body.password === process.env.ADMIN_PASSWORD) {
       const token = auth.createToken({ id: 1, name: 'Berto Ortega', email: 'roberto.ortega@galvanize.com', isAdmin: true })
-      res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
+      res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`)
     } else {
       res.redirect(`${process.env.CLIENT_URL}/login?error=invalid`)
     }
@@ -51,7 +51,12 @@ export class LoginRouter {
   public adminize(req: Request, res: Response, next: NextFunction) {
     const username = req.query.username
     if (username && req.query.password === process.env.ADMIN_PASSWORD) {
-      userQueries.makeAdmin(username).then(() => res.json({ message: `${username} is now admin` }))
+      userQueries.makeAdmin(username).then(user => {
+        let userInfo = Object.assign({}, user[0])
+        userInfo.isAdmin = true
+        const token = auth.createToken(userInfo)
+        res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`)
+      })
     } else {
       res.json({ error: 'Invalid Email or Password' })
     }

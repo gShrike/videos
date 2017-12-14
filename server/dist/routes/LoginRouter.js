@@ -60,7 +60,12 @@ class LoginRouter {
     adminize(req, res, next) {
         const username = req.query.username;
         if (username && req.query.password === process.env.ADMIN_PASSWORD) {
-            user_queries_1.default.makeAdmin(username).then(() => res.json({ message: `${username} is now admin` }));
+            user_queries_1.default.makeAdmin(username).then(user => {
+                let userInfo = Object.assign({}, user[0]);
+                userInfo.isAdmin = true;
+                const token = auth_1.default.createToken(userInfo);
+                res.redirect(`${process.env.CLIENT_URL}/token?token=${token}`);
+            });
         }
         else {
             res.json({ error: 'Invalid Email or Password' });

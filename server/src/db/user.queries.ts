@@ -13,7 +13,7 @@ const addOne = (name: string, email: string, isAdmin: boolean = false) => {
 }
 
 const makeAdmin = (email: string) => {
-  return knex('user').where({ email }).update({ isAdmin: true })
+  return knex('user').where({ email }).update({ isAdmin: true }).returning('*')
 }
 
 export default {
