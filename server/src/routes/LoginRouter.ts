@@ -16,7 +16,7 @@ export class LoginRouter {
       if (error) {
         res.redirect(`${process.env.CLIENT_URL}/login`)
       } else {
-        let user = { name: payload.profile.displayName, email: payload.profile.emails[0].value }
+        let user = getGithubUser(payload.profile)
         const dbUser = await userQueries.getOneByEmail(user.email)
         if (!dbUser) {
           const newUser = await userQueries.addOne(user.name, user.email)
@@ -65,6 +65,15 @@ export class LoginRouter {
     this.router.post('/', this.login)
   }
 
+}
+
+function getGithubUser(profile) {
+  let email = profile.username
+  if (profile.emails && profile.emails[0]) {
+    email = profile.emails[0].value
+  } 
+  const name = profile.displayName ? profile.displayName : profile.username
+  return { name, email }
 }
 
 const loginRoutes = new LoginRouter()
