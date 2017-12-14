@@ -10,14 +10,14 @@
         <div class="tags">
           <h4><a :href="link.url" target="_blank">{{link.title}}</a></h4>
           <p class="subtitle"> {{ link.created_at | formatDate }} </p>
-          <p class="rating"> {{ link.rating }} 👍</p>
+          <p class="rating"> {{ link.user_rating ? link.total + link.user_rating : link.total }} 👍</p>
           <ul>
             <li v-for="tag in link.tags" v-on:click="searchTag(tag.name)" class="tag">{{tag.name}}</li>
           </ul>
           <input type="button" class="show" v-on:click="toggleView(link)" v-if="link.embed" value="View" />
           <input type="button" class="edit" v-on:click="edit(link.id)" v-if="isAdmin" value="Edit" />
-          <input type="button" v-bind:class="{ upvote: true, selected: link.rating === 1 }" v-on:click="upvote(link)" v-if="isLoggedIn" value="👍" />
-          <input type="button" v-bind:class="{ downvote: true, selected: link.rating === -1 }" v-on:click="downvote(link)" v-if="isLoggedIn" value="👎" />
+          <input type="button" v-bind:class="{ upvote: true, selected: link.user_rating === 1 }" v-on:click="upvote(link)" v-if="isLoggedIn" value="👍" />
+          <input type="button" v-bind:class="{ downvote: true, selected: link.user_rating === -1 }" v-on:click="downvote(link)" v-if="isLoggedIn" value="👎" />
           <span class="errors"> {{ link.errorMessage }} </span>
           <iframe  v-if="link.embed && link.show" width="560" height="315" :src="link.embed" frameborder="0" allowfullscreen></iframe>
         </div>
@@ -75,32 +75,33 @@ export default {
         const data = await fetch(url, settings);
         const response = await data.json();
         this.loading = false;
-        response.links = this.addError(response.links);
+        response.links = this.formatLink(response.links);
         this.links = lib.addEmbed(response.links);
       } catch (e) {
         this.loading = false;
         this.error = true;
       }
     },
-    addError(links) {
+    formatLink(links) {
       return links.map((link) => {
         link.errorMessage = '';
+        link.total = link.user_rating ? link.rating - link.user_rating: link.rating;
         return link;
       });
     },
     upvote(link) {
-      link.rating = link.rating === 1 ? 0 : 1;
+      link.user_rating = link.user_rating === 1 ? 0 : 1;
       this.updateVote(link);
     },
     downvote(link) {
-      link.rating = link.rating === -1 ? 0 : -1;
+      link.user_rating = link.user_rating === -1 ? 0 : -1;
       this.updateVote(link);
     },
     async updateVote(link) {
       const url = `${config.SERVER_URL}/api/v1/links/${link.id}/rating`;
       const body = {
         user_id: this.user.id,
-        rating: link.rating,
+        rating: link.user_rating,
       };
       const settings = {
         method: 'put',

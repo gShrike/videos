@@ -4,15 +4,9 @@
     <div class="login">
       <form id="submit" :action="loginURL" method="post">
         <input v-on:click="gitLogin" type="button" class="github show" value="Github"/>
-        <h1> ------- or ------- </h1>
         <div v-if="error" class="errors">
           <p> {{ error }} </p>
         </div>
-        <label for="name">Name: </label>
-        <input type="text" name="name" id="name"/>
-        <label for="password">Password: </label>
-        <input type="password" name="password" id="password"/>
-        <input class="show" type="submit" value="login"/>
       </form>
     </div>
   </main>

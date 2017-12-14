@@ -5,9 +5,9 @@
 
 ## Admin Access
 
-Make a get request to `/login/adminize` with your Github email and secret password.
+Make a get request to `/login/adminize` with your Github username and secret password.
 
-`https://shrike-videos.firebaseapp.com/login/adminize?email=berto.ort@gmail.com&password=${secret}`
+`https://shrike-videos.herokuapp.com/login/adminize?username=berto&password=videos`
 
 ## CLI Upload
 

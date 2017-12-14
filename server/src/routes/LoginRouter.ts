@@ -49,9 +49,9 @@ export class LoginRouter {
   }
 
   public adminize(req: Request, res: Response, next: NextFunction) {
-    const email = req.query.email
-    if (email && req.query.password === process.env.ADMIN_PASSWORD) {
-      userQueries.makeAdmin(email).then(() => res.json({ message: `${email} is now admin` }))
+    const username = req.query.username
+    if (username && req.query.password === process.env.ADMIN_PASSWORD) {
+      userQueries.makeAdmin(username).then(() => res.json({ message: `${username} is now admin` }))
     } else {
       res.json({ error: 'Invalid Email or Password' })
     }
