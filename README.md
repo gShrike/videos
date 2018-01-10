@@ -5,7 +5,7 @@
 
 ## Admin Access
 
-Make a get request to `/login/adminize` with your Github username and secret password.
+Make a get request to `/login/adminize` with the password and your Github username or email (whatever displays on the navbar next to links).
 
 `https://shrike-videos.herokuapp.com/login/adminize?username=berto&password=videos`
 
