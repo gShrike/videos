@@ -8,6 +8,7 @@
         </router-link>
       </h3>
       <nav>
+        <div v-if="contact" class="col">{{contact}}</div>
         <div class="col"><router-link to="/links">links</router-link></div>
         <div v-if="!loggedIn" class="col"><router-link to="/login">login</router-link></div>
         <div v-if="loggedIn && isAdmin" class="col"><router-link to="/new">new</router-link></div>
@@ -25,6 +26,7 @@ export default {
   name: 'MainHeader',
   data() {
     return {
+      contact: '',
       loggedIn: false,
     };
   },
@@ -32,6 +34,7 @@ export default {
     this.loggedIn = await lib.isLoggedIn();
     const user = lib.getTokenUser();
     if (user) {
+      this.contact = user.email;
       this.isAdmin = user.isAdmin;
     }
   },
