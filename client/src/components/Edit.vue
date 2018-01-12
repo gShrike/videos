@@ -59,6 +59,10 @@ export default {
       this.title = this.link.title;
       this.url = this.link.url;
     }
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', `Bearer ${this.token}`);
+    this.headers = headers;
   },
   methods: {
     async submitLink() {
@@ -83,14 +87,10 @@ export default {
         title: this.title,
         url: this.url,
       };
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Authorization', `Bearer ${this.token}`);
-      this.headers = headers;
       const settings = {
         method: 'put',
         body: JSON.stringify(body),
-        headers,
+        headers: this.headers,
       };
       try {
         const data = await fetch(`${config.SERVER_URL}/api/v1/links/${this.link.id}`, settings);
