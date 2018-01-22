@@ -1,7 +1,8 @@
 <template>
-  <div class="search">
-    <label>Search: </label>
-    <input class="search" v-model="query" type="text" v-on:change="getLinks"/>
+  <div>
+    <label class="search">Search:
+      <input v-model="query" type="text" v-on:change="getLinks"/>
+    </label>
     <h2 v-if="loading">Loading...</h2>
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
     <h2 v-if="links.length === 0 && !loading">Nothing Found</h2>
@@ -20,7 +21,7 @@
             <a :href="link.url" target="_blank">{{link.title}}</a>
             <span class="subtitle"> {{ link.created_at | formatDate }} </span>
             <div class="link-tags">
-              <a v-for="tag in link.tags" v-on:click="searchTag(tag.name)">{{tag.name}}</a>
+              <a v-for="(tag, index) in link.tags" v-on:click="searchTag(tag.name)">{{tag.name }}<span v-if="index !== link.tags.length - 1">,</span></a>
             </div>
           </div>
           <span class="errors"> {{ link.errorMessage }} </span>
@@ -87,7 +88,9 @@ export default {
         const response = await data.json();
         this.loading = false;
         response.links = this.formatLink(response.links);
-        this.links = lib.addEmbed(response.links);
+        this.links = lib.addEmbed(response.links).sort((a, b) => {
+          return b.rating - a.rating;
+        });
       } catch (e) {
         this.loading = false;
         this.error = true;

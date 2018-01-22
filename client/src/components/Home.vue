@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3> A Platform for Links </h3>
-    <h6> Tag, rate, and share links to videos, blogs, documents, and more </h6>
+    <h4> A Platform for Links </h4>
+    <p> Tag, rate, and share links to videos, blogs, documents, and more </p>
     <links />
   </div>
 </template>
