@@ -4,7 +4,7 @@
       <h3>
         <router-link to="/">
           <img class="logo" src="../assets/logo.png" alt="logo"/>
-          <span class="title"> Shrike Videos </span>
+          <span class="title"> Videos </span>
         </router-link>
       </h3>
       <nav>

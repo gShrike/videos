@@ -63,14 +63,22 @@ input[type='submit']:hover , input[type='button']:hover, button:hover, a.button 
 }
 
 .upvote.selected {
-  background: $seventh; 
+  color: $seventh; 
 }
 
 .downvote.selected {
-  background: $red;
+  color: $red;
 }
 
 input[type='submit']:active , input[type='button']:active, button:active, a.button {
   color: gray;
   border: 3px solid $black;
+}
+
+.github {
+  background: $secondary;
+  color: $white;
+  &:hover {
+    cursor: pointer;
+  }
 }

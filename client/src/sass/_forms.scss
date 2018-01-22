@@ -4,6 +4,9 @@
   border: 3px solid rgba($black, 0.3);
   border-radius: 25px;
   padding: 2%;
+  form {
+    text-align: center;
+  }
   input {
     width: 95%;
     display: block;
@@ -112,10 +115,6 @@
   position: absolute;
   top: 10px;
   right: 10px;
-}
-
-.selected {
-  background: $fifth;
 }
 
 .match {

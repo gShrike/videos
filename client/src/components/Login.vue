@@ -3,7 +3,9 @@
     <h2>Login</h2>
     <div class="login">
       <form id="submit" :action="loginURL" method="post">
-        <input v-on:click="gitLogin" type="button" class="github show" value="Github"/>
+        <button type="button" v-on:click="gitLogin" class="github primary button">
+          <icon name="github"></icon>
+        </button>
         <div v-if="error" class="errors">
           <p> {{ error }} </p>
         </div>
@@ -13,6 +15,7 @@
 </template>
 
 <script>
+import 'vue-awesome/icons/github';
 import qs from 'qs';
 import config from '../config';
 

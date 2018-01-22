@@ -11,6 +11,8 @@ export default {
       if (url.host === 'www.youtube.com') {
         const query = qs.parse(url.query.substr(1));
         embedLink.embed = `https://www.youtube.com/embed/${query.v}`;
+      } else if (url.host === 'youtu.be') {
+        embedLink.embed = `https://www.youtube.com/embed/${url.pathname.substr(1)}`;
       }
       return embedLink;
     })

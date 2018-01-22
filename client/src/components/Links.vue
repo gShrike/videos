@@ -7,27 +7,38 @@
     <h2 v-if="links.length === 0 && !loading">Nothing Found</h2>
     <ul class="links" v-for="link in links">
       <li>
-        <div class="tags">
-          <h4><a :href="link.url" target="_blank">{{link.title}}</a></h4>
-          <p class="subtitle"> {{ link.created_at | formatDate }} </p>
-          <p class="rating"> {{ link.user_rating ? link.total + link.user_rating : link.total }} 👍</p>
-          <ul>
-            <li v-for="tag in link.tags" v-on:click="searchTag(tag.name)" class="tag">{{tag.name}}</li>
-          </ul>
-          <input type="button" class="show" v-on:click="toggleView(link)" v-if="link.embed" value="View" />
-          <input type="button" class="edit" v-on:click="edit(link.id)" v-if="isAdmin" value="Edit" />
-          <input type="button" v-bind:class="{ upvote: true, selected: link.user_rating === 1 }" v-on:click="upvote(link)" v-if="isLoggedIn" value="👍" />
-          <input type="button" v-bind:class="{ downvote: true, selected: link.user_rating === -1 }" v-on:click="downvote(link)" v-if="isLoggedIn" value="👎" />
+        <div class="link">
+          <div class="vote">
+            <span v-bind:class="{ upvote: true, selected: link.user_rating === 1 }" v-on:click="upvote(link)"><icon name="arrow-circle-up"></icon></span>
+              {{ link.user_rating ? link.total + link.user_rating : link.total }}
+            <span v-bind:class="{ downvote: true, selected: link.user_rating === -1 }" v-on:click="downvote(link)"><icon name="arrow-circle-down"></icon></span>
+          </div>
+          <div> 
+            <span v-on:click="toggleView(link)" v-if="link.embed" class="youtube"><icon name="youtube-play"></icon></span>
+            <span v-if="!link.embed" class="icon"><icon name="link"></icon></span>
+            <span v-on:click="edit(link.id)" v-if="isAdmin" class="edit-icon"><icon name="edit"></icon></span>
+            <a :href="link.url" target="_blank">{{link.title}}</a>
+            <span class="subtitle"> {{ link.created_at | formatDate }} </span>
+            <div class="link-tags">
+              <a v-for="tag in link.tags" v-on:click="searchTag(tag.name)">{{tag.name}}</a>
+            </div>
+          </div>
           <span class="errors"> {{ link.errorMessage }} </span>
-          <iframe  v-if="link.embed && link.show" width="560" height="315" :src="link.embed" frameborder="0" allowfullscreen></iframe>
         </div>
+        <iframe  v-if="link.embed && link.show" width="560" height="315" :src="link.embed" frameborder="0" allowfullscreen></iframe>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import 'vue-awesome/icons/youtube-play';
+import 'vue-awesome/icons/arrow-circle-up';
+import 'vue-awesome/icons/arrow-circle-down';
+import 'vue-awesome/icons/edit';
+import 'vue-awesome/icons/link';
 import moment from 'moment';
+
 import config from '../config';
 import lib from '../lib';
 
@@ -90,10 +101,16 @@ export default {
       });
     },
     upvote(link) {
+      if (!this.isLoggedIn) {
+        this.$router.push({ name: 'Login' });
+      }
       link.user_rating = link.user_rating === 1 ? 0 : 1;
       this.updateVote(link);
     },
     downvote(link) {
+      if (!this.isLoggedIn) {
+        this.$router.push({ name: 'Login' });
+      }
       link.user_rating = link.user_rating === -1 ? 0 : -1;
       this.updateVote(link);
     },
@@ -134,7 +151,7 @@ export default {
   },
   filters: {
     formatDate(date) {
-      return moment(date).format('MMMM Do YYYY');
+      return moment(date).format('MMMM Do YY');
     },
   },
 };
