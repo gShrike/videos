@@ -3,6 +3,11 @@
     <label class="search">Search:
       <input v-model="query" type="text" v-on:change="getLinks"/>
     </label>
+    <nav class="sorter-nav">
+      <label class="search">Sort By: </label>
+      <button v-bind:class="{ active: sortedBy === 'topRated' }" v-on:click="sortBy('topRated')" type="button">Top Rated</button>
+      <button v-bind:class="{ active: sortedBy === 'recentlyUploaded' }" v-on:click="sortBy('recentlyUploaded')" type="button">Recently Uploaded</button>
+    </nav>
     <h2 v-if="loading">Loading...</h2>
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
     <h2 v-if="links.length === 0 && !loading">Nothing Found</h2>
@@ -14,7 +19,7 @@
               {{ link.user_rating ? link.total + link.user_rating : link.total }}
             <span v-bind:class="{ downvote: true, selected: link.user_rating === -1 }" v-on:click="downvote(link)"><icon name="arrow-circle-down"></icon></span>
           </div>
-          <div> 
+          <div>
             <span v-on:click="toggleView(link)" v-if="link.embed" class="youtube"><icon name="youtube-play"></icon></span>
             <span v-if="!link.embed" class="icon"><icon name="link"></icon></span>
             <span v-on:click="edit(link.id)" v-if="isAdmin" class="edit-icon"><icon name="edit"></icon></span>
@@ -42,6 +47,7 @@ import moment from 'moment';
 
 import config from '../config';
 import lib from '../lib';
+import sorter from '../lib/sorter';
 
 export default {
   name: 'Links',
@@ -54,6 +60,7 @@ export default {
     user: {},
     headers: new Headers(),
     error: false,
+    sortedBy: 'topRated',
   }),
   async mounted() {
     this.query = this.$route.query.q;
@@ -150,6 +157,10 @@ export default {
     },
     edit(id) {
       this.$router.push({ name: 'Edit', params: { id } });
+    },
+    sortBy(type) {
+      this.sortedBy = type;
+      this.links.sort(sorter[type]);
     },
   },
   filters: {

@@ -63,7 +63,7 @@ input[type='submit']:hover , input[type='button']:hover, button:hover, a.button 
 }
 
 .upvote.selected {
-  color: $seventh; 
+  color: $seventh;
 }
 
 .downvote.selected {
@@ -80,5 +80,20 @@ input[type='submit']:active , input[type='button']:active, button:active, a.butt
   color: $white;
   &:hover {
     cursor: pointer;
+  }
+}
+
+.sorter-nav {
+  label {
+    margin-top: 1em;
+  }
+  button {
+    color: $black;
+    font-size: 1em;
+    padding: 0 1em;
+
+    &.active {
+      border-color: $secondary;
+    }
   }
 }
