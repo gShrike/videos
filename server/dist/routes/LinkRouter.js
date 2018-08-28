@@ -28,7 +28,7 @@ class LinkRouter {
     getOne(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = parseInt(req.params.id);
-            const link = yield link_queries_1.default.getOne(id);
+            const link = yield link_queries_1.default.getOne(id, null);
             if (link) {
                 res.json({ message: 'Success', link });
             }

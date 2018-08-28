@@ -21,7 +21,7 @@ export class LinkRouter {
 
   public async getOne(req: Request, res: Response, next: NextFunction) {
     const id: number = parseInt(req.params.id)
-    const link: Link = await linkQueries.getOne(id) 
+    const link: Link = await linkQueries.getOne(id, null) 
     if (link) {
       res.json({ message: 'Success', link })
     } else {

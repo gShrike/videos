@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
@@ -23,19 +24,9 @@ class App {
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(auth_1.default.passport.initialize());
         this.app.use(auth_1.default.passport.session());
+        this.app.use('/', express.static(path.join(__dirname + '/../client/dist')));
     }
     routes() {
-        let router = express.Router();
-        router.get('/', (req, res, next) => {
-            res.json({
-                message: 'Shrike Videos API',
-                endpoints: [
-                    '/api/v1/links',
-                    '/api/v1/tags'
-                ]
-            });
-        });
-        this.app.use('/', router);
         this.app.use('/login', LoginRouter_1.default);
         this.app.use('/api/v1/links', LinkRouter_1.default);
         this.app.use('/api/v1/tags', TagRouter_1.default);

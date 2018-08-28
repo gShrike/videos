@@ -29,20 +29,10 @@ class App {
     this.app.use(bodyParser.urlencoded({ extended: false }))
     this.app.use(auth.passport.initialize())
     this.app.use(auth.passport.session())
+    this.app.use('/', express.static(path.join(__dirname + '/../client/dist')));
   }
 
   private routes(): void {
-    let router = express.Router()
-    router.get('/', (req, res, next) => {
-      res.json({
-        message: 'Shrike Videos API',
-        endpoints: [
-          '/api/v1/links',
-          '/api/v1/tags'
-        ]
-      })
-    })
-    this.app.use('/', router)
     this.app.use('/login', LoginRouter)
     this.app.use('/api/v1/links', LinkRouter)
     this.app.use('/api/v1/tags', TagRouter)
