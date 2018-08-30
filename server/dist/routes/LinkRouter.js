@@ -20,8 +20,9 @@ class LinkRouter {
     getAll(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = req.query.q ? req.query.q.toLowerCase() : undefined;
+            const offset = Number(req.query.offset);
             const user = auth_1.default.getUser(req);
-            const links = yield link_queries_1.default.getAll(query, user);
+            const links = yield link_queries_1.default.getAll(query, offset, user);
             res.json({ message: 'Success', links });
         });
     }

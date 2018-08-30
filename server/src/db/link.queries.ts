@@ -27,10 +27,14 @@ const getOne = async (id: number, user: any) => {
   return link
 }
 
-const getAll = async (q: string, user: any) => {
+const getAll = async (q: string, offset: number, user: any) => {
   let query = knex('link')
     .select('link.id', 'link.title', 'link.url', 'link.created_at')
     .orderBy('title', 'asc')
+    .limit(10)
+  if (offset && !isNaN(offset)) {
+    query = query.offset(offset)
+  }
   if (q) {
     query = query.innerJoin('link_tags', 'link.id', 'link_tags.link_id')
       .innerJoin('tag', 'tag.id', 'link_tags.tag_id')

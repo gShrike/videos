@@ -32,10 +32,14 @@ const getOne = (id, user) => __awaiter(this, void 0, void 0, function* () {
     link.tags = yield Promise.all(tagRequests);
     return link;
 });
-const getAll = (q, user) => __awaiter(this, void 0, void 0, function* () {
+const getAll = (q, offset, user) => __awaiter(this, void 0, void 0, function* () {
     let query = connection_1.default('link')
         .select('link.id', 'link.title', 'link.url', 'link.created_at')
-        .orderBy('title', 'asc');
+        .orderBy('title', 'asc')
+        .limit(10);
+    if (offset && !isNaN(offset)) {
+        query = query.offset(offset);
+    }
     if (q) {
         query = query.innerJoin('link_tags', 'link.id', 'link_tags.link_id')
             .innerJoin('tag', 'tag.id', 'link_tags.tag_id')
