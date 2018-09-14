@@ -8,7 +8,7 @@
       <button v-bind:class="{ active: sortedBy === 'topRated' }" v-on:click="sortBy('topRated')" type="button">Top Rated</button>
       <button v-bind:class="{ active: sortedBy === 'recentlyUploaded' }" v-on:click="sortBy('recentlyUploaded')" type="button">Recently Uploaded</button>
     </nav>
-    <h2 v-if="loading">Loading...</h2>
+    <circle></circle>
     <h2 v-if="error">Oh no! We couldn't load the links. Try again later</h2>
     <h2 v-if="links.length === 0 && !loading">Nothing Found</h2>
     <ul class="links" v-for="link in links">
@@ -34,6 +34,7 @@
         <iframe  v-if="link.embed && link.show" width="560" height="315" :src="link.embed" frameborder="0" allowfullscreen></iframe>
       </li>
     </ul>
+    <h2 v-if="loading"><Circle></Circle></h2>
   </div>
 </template>
 
@@ -44,6 +45,7 @@ import 'vue-awesome/icons/arrow-circle-down';
 import 'vue-awesome/icons/edit';
 import 'vue-awesome/icons/link';
 import moment from 'moment';
+import CircleSpin from 'vue-loading-spinner/src/components/Circle';
 
 import config from '../config';
 import lib from '../lib';
@@ -51,6 +53,9 @@ import sorter from '../lib/sorter';
 
 export default {
   name: 'Links',
+  components: {
+    CircleSpin,
+  },
   data: () => ({
     links: [],
     query: '',
@@ -61,6 +66,7 @@ export default {
     headers: new Headers(),
     error: false,
     sortedBy: 'topRated',
+    noMoreLinks: false,
   }),
   async mounted() {
     this.query = this.$route.query.q;
@@ -79,7 +85,7 @@ export default {
     /*eslint-disable */
     async getLinks() {
       try {
-        let url = `${config.SERVER_URL}/api/v1/links`;
+        let url = `${config.SERVER_URL}/api/v1/links?offset=${this.links.length}`;
         if (this.query) {
           this.$router.push({ query: { q: this.query } });
           url += `?q=${this.query}`;
@@ -95,9 +101,14 @@ export default {
         const response = await data.json();
         this.loading = false;
         response.links = this.formatLink(response.links);
-        this.links = lib.addEmbed(response.links).sort((a, b) => {
-          return b.rating - a.rating;
-        });
+        console.log(response.links.length)
+        if (response.links.length > 0) {
+          this.links.push(...lib.addEmbed(response.links).sort((a, b) => {
+            return b.rating - a.rating;
+          }));
+        } else {
+          this.noMoreLinks = true;
+        }
       } catch (e) {
         this.loading = false;
         this.error = true;
